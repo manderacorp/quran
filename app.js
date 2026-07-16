@@ -1,7 +1,5 @@
-// URL Web App GAS Anda yang sudah terintegrasi
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzJNFhKw_SPAgVhZgYkcCZ3utTkelY2VQBnvcgepMawQG4hCHSUH5pZLCiYqk0pEIMrEw/exec"; 
 
-// Daftar 114 Nama Surah dalam Al-Quran
 const listSurah = [
   "Al-Fatihah", "Al-Baqarah", "Ali 'Imran", "An-Nisa'", "Al-Ma'idah", "Al-An'am", "Al-A'raf", "Al-Anfal", "At-Taubah", "Yunus",
   "Hud", "Yusuf", "Ar-Ra'd", "Ibrahim", "Al-Hijr", "An-Nahl", "Al-Isra'", "Al-Kahf", "Maryam", "Thaha",
@@ -17,13 +15,11 @@ const listSurah = [
   "Al-Lahab", "Al-Ikhlash", "Al-Falaq", "An-Nas"
 ];
 
-// Load data saat halaman dibuka
 document.addEventListener("DOMContentLoaded", function() {
     populateSurahDropdown();
     ambilDataDariSheet();
 });
 
-// Masukkan daftar surah ke dropdown HTML
 function populateSurahDropdown() {
     const selectEl = document.getElementById("surahInput");
     listSurah.forEach((surah, index) => {
@@ -34,7 +30,7 @@ function populateSurahDropdown() {
     });
 }
 
-// Mengambil data baris terakhir dari Google Sheets
+// Mengambil data baris terakhir & 10 log terakhir dari Google Sheets
 function ambilDataDariSheet() {
     const payload = { action: "ambil" };
 
@@ -46,21 +42,45 @@ function ambilDataDariSheet() {
     .then(res => {
         if (res.status === "success") {
             const data = res.data;
+            
+            // 1. Tampilkan data terakhir di kotak hijau atas
             document.getElementById("lastSurah").innerText = data.surah;
             document.getElementById("lastAyat").innerText = data.ayat !== "-" ? "Ayat " + data.ayat : "-";
             document.getElementById("lastJuz").innerText = data.juz !== "-" ? "Juz " + data.juz : "-";
             document.getElementById("lastUpdated").innerText = data.waktu;
+            
+            // 2. Tampilkan 10 Log Terakhir ke tabel
+            tampilkanTabelLog(res.logs);
         } else {
-            console.error("Gagal memuat data dari database:", res.message);
+            console.error("Gagal memuat data:", res.message);
         }
     })
     .catch(error => {
         console.error("Error Fetch data:", error);
-        alert("Gagal terhubung ke Database. Periksa konfigurasi URL GAS Anda.");
     });
 }
 
-// Mengirimkan data baru ke Google Sheets
+function tampilkanTabelLog(logs) {
+    const tbody = document.getElementById("logTableBody");
+    tbody.innerHTML = ""; // Bersihkan loading text
+
+    if (!logs || logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-log">Belum ada riwayat membaca.</td></tr>`;
+        return;
+    }
+
+    logs.forEach(log => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${log.waktu}</td>
+            <td><strong>${log.surah}</strong></td>
+            <td>Ayat ${log.ayat}</td>
+            <td>Juz ${log.juz}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
 function simpanProgres() {
     const surah = document.getElementById("surahInput").value;
     const ayat = document.getElementById("ayatInput").value.trim();
@@ -76,7 +96,6 @@ function simpanProgres() {
         return;
     }
 
-    // Ubah button ke loading state
     btn.disabled = true;
     btn.innerText = "Menyimpan ke Cloud...";
 
@@ -89,7 +108,6 @@ function simpanProgres() {
         }
     };
 
-    // Kirim POST Request ke Web App GAS menggunakan Fetch API
     fetch(WEB_APP_URL, {
         method: "POST",
         body: JSON.stringify(payload)
@@ -100,14 +118,12 @@ function simpanProgres() {
         btn.innerText = "Simpan Progres";
         
         if (res.status === "success") {
-            // Kosongkan form input
             document.getElementById("surahInput").value = "";
             document.getElementById("ayatInput").value = "";
             document.getElementById("juzInput").value = "";
             
             alert(res.message);
-            // Muat ulang data terbaru di bagian UI atas
-            ambilDataDariSheet();
+            ambilDataDariSheet(); // Segarkan tampilan dashboard dan tabel log
         } else {
             alert("Error: " + res.message);
         }
