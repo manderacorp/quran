@@ -17,37 +17,39 @@
             background-color: var(--background-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
         }
 
         .container {
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
+            box-sizing: border-box;
         }
 
         h2 {
             text-align: center;
             color: var(--primary-color);
             margin-top: 0;
-            font-size: 22px;
+            font-size: 20px;
         }
 
         .status-box {
             background: #e8f5e9;
             border-left: 5px solid var(--primary-color);
-            padding: 15px;
+            padding: 12px;
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .status-box p {
             margin: 5px 0;
+            font-size: 15px;
         }
 
         .highlight {
@@ -56,22 +58,23 @@
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
+            font-size: 14px;
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 15px;
             background-color: #fff;
         }
 
@@ -82,7 +85,7 @@
             padding: 12px;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             transition: background 0.3s;
             font-weight: bold;
@@ -97,15 +100,59 @@
             background-color: var(--secondary-color);
         }
 
-        .loading-text {
-            font-style: italic;
+        /* Desain Tabel Log */
+        .log-section {
+            margin-top: 25px;
+            border-top: 2px dashed #ddd;
+            padding-top: 15px;
+        }
+
+        .log-section h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 16px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #e8f5e9;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .empty-log {
+            text-align: center;
             color: #888;
+            font-style: italic;
+            padding: 15px 0;
         }
 
         .footer {
             text-align: center;
             margin-top: 20px;
-            font-size: 12px;
+            font-size: 11px;
             color: #777;
         }
     </style>
@@ -118,9 +165,9 @@
     <!-- Kotak Status Bacaan Terakhir -->
     <div class="status-box">
         <p><strong>📖 Bacaan Terakhir:</strong></p>
-        <p>Surah: <span id="lastSurah" class="highlight">Memuat data...</span></p>
-        <p>Ayat Terakhir: <span id="lastAyat" class="highlight">Memuat data...</span></p>
-        <p>Juz: <span id="lastJuz" class="highlight">Memuat data...</span></p>
+        <p>Surah: <span id="lastSurah" class="highlight">Memuat...</span></p>
+        <p>Ayat Terakhir: <span id="lastAyat" class="highlight">Memuat...</span></p>
+        <p>Juz: <span id="lastJuz" class="highlight">Memuat...</span></p>
         <small style="color: #666;">Diperbarui: <span id="lastUpdated">-</span></small>
     </div>
 
@@ -129,12 +176,11 @@
         <label for="surahInput">Pilih Surah</label>
         <select id="surahInput">
             <option value="">-- Pilih Surah --</option>
-            <!-- Daftar 114 Surah diisi via Javascript -->
         </select>
     </div>
 
     <div class="form-group">
-        <label for="ayatInput">Ayat Terakhir Selesai Dibaca</label>
+        <label for="ayatInput">Ayat Terakhir Selesai</label>
         <input type="number" id="ayatInput" placeholder="Contoh: 141" min="1">
     </div>
 
@@ -145,12 +191,33 @@
 
     <button id="btnSimpan" onclick="simpanProgres()">Simpan Progres</button>
 
+    <!-- Tampilan 10 Log Terakhir -->
+    <div class="log-section">
+        <h3>📜 10 Riwayat Terakhir</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waktu</th>
+                        <th>Surah</th>
+                        <th>Ayat</th>
+                        <th>Juz</th>
+                    </tr>
+                </thead>
+                <tbody id="logTableBody">
+                    <tr>
+                        <td colspan="4" class="empty-log">Memuat data riwayat...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="footer">
         Sinkronisasi otomatis dengan Google Sheets ☁️
     </div>
 </div>
 
-<!-- Import Logic JavaScript -->
 <script src="app.js"></script>
 </body>
 </html>
