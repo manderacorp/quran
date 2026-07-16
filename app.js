@@ -1,4 +1,4 @@
-// GANTI DENGAN URL WEB APP GAS ANDA YANG SEBENARNYA
+// URL Web App GAS Anda yang sudah terintegrasi
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzJNFhKw_SPAgVhZgYkcCZ3utTkelY2VQBnvcgepMawQG4hCHSUH5pZLCiYqk0pEIMrEw/exec"; 
 
 // Daftar 114 Nama Surah dalam Al-Quran
@@ -89,7 +89,7 @@ function simpanProgres() {
         }
     };
 
-    // Kirim POST Request ke Web App GAS menggunakan Fetch API dengan CORS Handling
+    // Kirim POST Request ke Web App GAS menggunakan Fetch API
     fetch(WEB_APP_URL, {
         method: "POST",
         body: JSON.stringify(payload)
@@ -100,13 +100,13 @@ function simpanProgres() {
         btn.innerText = "Simpan Progres";
         
         if (res.status === "success") {
-            // Kosongkan form
+            // Kosongkan form input
             document.getElementById("surahInput").value = "";
             document.getElementById("ayatInput").value = "";
             document.getElementById("juzInput").value = "";
             
             alert(res.message);
-            // Muat ulang data terbaru agar tampilan langsung berubah
+            // Muat ulang data terbaru di bagian UI atas
             ambilDataDariSheet();
         } else {
             alert("Error: " + res.message);
